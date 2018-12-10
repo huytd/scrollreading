@@ -25,7 +25,7 @@ const throttle = (func, limit) => {
 const activeScrollReader = () => {
     if (!readingMode) {
         readingMode = true;
-        $("li, h1, h2, h3, h4, h5, h6, a, sub, sup, p").each((i,p) => {
+        $("p, li, h1, h2, h3, h4, h5, h6, a, sub, sup").each((i,p) => {
             let words = $(p).text().split(' ');
             totalWords += words.length;
             words = words.reduce((words, word) => {
@@ -76,7 +76,9 @@ const activeScrollReader = () => {
             let target = next ? get_next(curr) : get_prev(curr);
             if (target.length) {
                 target.addClass("active");
-                if (target.offset().top > ($("html, body").scrollTop() + screen.height / 2 + screen.height / 5)) {
+                let top = target.offset().top;
+                let currTop = $("html, body").scrollTop();
+                if ( top <= currTop || top >= (currTop + screen.height / 2 + screen.height / 5)) {
                     target.scrollView();
                 }
                 curr.removeClass("active");
