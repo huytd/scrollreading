@@ -25,7 +25,7 @@ const throttle = (func, limit) => {
 const activeScrollReader = () => {
     if (!readingMode) {
         readingMode = true;
-        $("p").each((i,p) => {
+        $("li, h1, h2, h3, h4, h5, h6, a, sub, sup, p").each((i,p) => {
             let words = $(p).text().split(' ');
             totalWords += words.length;
             words = words.reduce((words, word) => {
