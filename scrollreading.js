@@ -41,7 +41,7 @@ const activeScrollReader = () => {
                     finalHTML.push($(elem).addClass("reaid-word")[0].outerHTML);
                 }
             }
-            $(this).html(finalHTML.join(" "));
+            $(this).html(finalHTML.join(""));
         });
 
         $('html,body').css('cursor','crosshair');
