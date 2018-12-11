@@ -1,4 +1,4 @@
-const WORD_DELAY = 250;
+const WORD_DELAY = 360;
 let readPos = 0;
 let totalWords = 0;
 let readingMode = false;
