@@ -46,9 +46,23 @@ const activeScrollReader = () => {
 
         $('html,body').css('cursor','crosshair');
 
-
         window.addEventListener('wheel', (e) => {
             if (!$(".reaid-word.active").length) return;
+            e.preventDefault();
+            next_word(e);
+        });
+
+        $(window).on('keydown', e => {
+            // L or W
+            if (e.which === 76 || e.which === 87) {
+                // next
+                e.deltaY = 1;
+            } else
+                // H or B
+                if (e.which === 72 || e.which === 66) {
+                // prev
+                e.deltaY = -1;
+            }
             e.preventDefault();
             next_word(e);
         });
