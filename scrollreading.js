@@ -1,4 +1,4 @@
-const WORD_DELAY = 360;
+const WORD_DELAY = 200;
 let readPos = 0;
 let totalWords = 0;
 let readingMode = false;
@@ -32,7 +32,7 @@ const activeScrollReader = () => {
             for (let i = 0; i < contents.length; i++) {
                 let elem = contents[i];
                 if (elem.nodeName === "#text") {
-                    let text = $(elem).text().split(/(?=\.|,|;|\?|\!)/g).reduce((words, word) => {
+                    let text = $(elem).text().split(/(?=\.\s|,\s|;\s|\?\s|\!\s)/g).reduce((words, word) => {
                         if (word.length) words.push(`<span class="reaid-word">${word}</span>`);
                         return words;
                     }, []).join("");
