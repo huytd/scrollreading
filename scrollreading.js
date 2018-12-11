@@ -1,4 +1,4 @@
-const WORD_DELAY = 100;
+const WORD_DELAY = 250;
 let readPos = 0;
 let totalWords = 0;
 let readingMode = false;
@@ -26,13 +26,13 @@ const activeScrollReader = () => {
     if (!readingMode) {
         readingMode = true;
 
-        $("p").each(function(){
+        $("p, h1, h2, h3, h4, h5, h6").each(function(){
             let finalHTML = [];
             let contents = $(this).contents();
             for (let i = 0; i < contents.length; i++) {
                 let elem = contents[i];
                 if (elem.nodeName === "#text") {
-                    let text = $(elem).text().split(/(?=\.|,|\?|\!)/g).reduce((words, word) => {
+                    let text = $(elem).text().split(/(?=\.|,|;|\?|\!)/g).reduce((words, word) => {
                         if (word.length) words.push(`<span class="reaid-word">${word}</span>`);
                         return words;
                     }, []).join("");
