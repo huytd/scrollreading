@@ -80,7 +80,13 @@ const activeScrollReader = () => {
         const get_next = e => {
             let next = e.next();
             if (!next.length) {
-                next = e.parent().next().find(".scrollreading-word:eq(0)");
+                let nexts = e.parent().nextUntil("");
+                for (let i = 0; i < nexts.length; i++) {
+                    let elem = $(nexts[i]);
+                    if (elem.has(".scrollreading-word").length) {
+                        next = elem.find(".scrollreading-word:eq(0)"); break;
+                    }
+                }
             }
             return next;
         };
@@ -88,7 +94,13 @@ const activeScrollReader = () => {
         const get_prev = e => {
             let prev = e.prev();
             if (!prev.length) {
-                prev = e.parent().prev().find(".scrollreading-word:last-child");
+                let prevs = e.parent().prevUntil("");
+                for (let i = 0; i < prevs.length; i++) {
+                    let elem = $(prevs[i]);
+                    if (elem.has(".scrollreading-word").length) {
+                        prev = elem.find(".scrollreading-word:last-child"); break;
+                    }
+                }
             }
             return prev;
         };
