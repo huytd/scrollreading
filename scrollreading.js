@@ -33,12 +33,12 @@ const activeScrollReader = () => {
                 let elem = contents[i];
                 if (elem.nodeName === "#text") {
                     let text = $(elem).text().split(/(?=\.\s|,\s|;\s|\?\s|\!\s)/g).reduce((words, word) => {
-                        if (word.length) words.push(`<span class="reaid-word">${word}</span>`);
+                        if (word.length) words.push(`<span class="scrollreading-word">${word}</span>`);
                         return words;
                     }, []).join("");
                     finalHTML.push(text);
                 } else {
-                    finalHTML.push($(elem).addClass("reaid-word")[0].outerHTML);
+                    finalHTML.push($(elem).addClass("scrollreading-word")[0].outerHTML);
                 }
             }
             $(this).html(finalHTML.join(""));
@@ -47,7 +47,7 @@ const activeScrollReader = () => {
         $('html,body').css('cursor','crosshair');
 
         window.addEventListener('wheel', (e) => {
-            if (!$(".reaid-word.active-word").length) return;
+            if (!$(".scrollreading-word.active-word").length) return;
             e.preventDefault();
             next_word(e);
         });
@@ -67,12 +67,12 @@ const activeScrollReader = () => {
             next_word(e);
         });
 
-        $(".reaid-word").on('click', function() {
+        $(".scrollreading-word").on('click', function() {
             if ($(this).hasClass("active-word")) {
                 $(this).removeClass("active-word");
                 return;
             } else {
-                $(".reaid-word.active-word").removeClass("active-word");
+                $(".scrollreading-word.active-word").removeClass("active-word");
                 $(this).addClass("active-word");
             }
         });
@@ -80,7 +80,7 @@ const activeScrollReader = () => {
         const get_next = e => {
             let next = e.next();
             if (!next.length) {
-                next = e.parent().next().find(".reaid-word:eq(0)");
+                next = e.parent().next().find(".scrollreading-word:eq(0)");
             }
             return next;
         };
@@ -88,14 +88,14 @@ const activeScrollReader = () => {
         const get_prev = e => {
             let prev = e.prev();
             if (!prev.length) {
-                prev = e.parent().prev().find(".reaid-word:last-child");
+                prev = e.parent().prev().find(".scrollreading-word:last-child");
             }
             return prev;
         };
 
         const next_word = throttle((e) => {
             let next = (e.deltaY > 0) ? true : false;
-            let curr = $(".reaid-word.active-word");
+            let curr = $(".scrollreading-word.active-word");
             let target = next ? get_next(curr) : get_prev(curr);
             if (target.length) {
                 target.addClass("active-word");
