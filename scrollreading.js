@@ -32,10 +32,10 @@ const activeScrollReader = () => {
             for (let i = 0; i < contents.length; i++) {
                 let elem = contents[i];
                 if (elem.nodeName === "#text") {
-                    let text = $(elem).text().split(' ').reduce((words, word) => {
+                    let text = $(elem).text().split(/(?=\.|,|\?|\!)/g).reduce((words, word) => {
                         if (word.length) words.push(`<span class="reaid-word">${word}</span>`);
                         return words;
-                    }, []).join(" ");
+                    }, []).join("");
                     finalHTML.push(text);
                 } else {
                     finalHTML.push($(elem).addClass("reaid-word")[0].outerHTML);
