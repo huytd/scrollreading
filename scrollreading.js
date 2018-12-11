@@ -25,14 +25,23 @@ const throttle = (func, limit) => {
 const activeScrollReader = () => {
     if (!readingMode) {
         readingMode = true;
-        $("p, li, h1, h2, h3, h4, h5, h6, a, sub, sup").each((i,p) => {
-            let words = $(p).text().split(' ');
-            totalWords += words.length;
-            words = words.reduce((words, word) => {
-                if (word.length) words.push(`<span class="reaid-word">${word}</span>`);
-                return words;
-            }, []).join(" ");
-            $(p).html(words);
+
+        $("p").each(function(){
+            let finalHTML = [];
+            let contents = $(this).contents();
+            for (let i = 0; i < contents.length; i++) {
+                let elem = contents[i];
+                if (elem.nodeName === "#text") {
+                    let text = $(elem).text().split(' ').reduce((words, word) => {
+                        if (word.length) words.push(`<span class="reaid-word">${word}</span>`);
+                        return words;
+                    }, []).join(" ");
+                    finalHTML.push(text);
+                } else {
+                    finalHTML.push($(elem).addClass("reaid-word")[0].outerHTML);
+                }
+            }
+            $(this).html(finalHTML.join(" "));
         });
 
         $('html,body').css('cursor','crosshair');
