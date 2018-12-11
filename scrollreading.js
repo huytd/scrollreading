@@ -47,7 +47,7 @@ const activeScrollReader = () => {
         $('html,body').css('cursor','crosshair');
 
         window.addEventListener('wheel', (e) => {
-            if (!$(".reaid-word.active").length) return;
+            if (!$(".reaid-word.active-word").length) return;
             e.preventDefault();
             next_word(e);
         });
@@ -68,12 +68,12 @@ const activeScrollReader = () => {
         });
 
         $(".reaid-word").on('click', function() {
-            if ($(this).hasClass("active")) {
-                $(this).removeClass("active");
+            if ($(this).hasClass("active-word")) {
+                $(this).removeClass("active-word");
                 return;
             } else {
-                $(".reaid-word.active").removeClass("active");
-                $(this).addClass("active");
+                $(".reaid-word.active-word").removeClass("active-word");
+                $(this).addClass("active-word");
             }
         });
 
@@ -95,16 +95,16 @@ const activeScrollReader = () => {
 
         const next_word = throttle((e) => {
             let next = (e.deltaY > 0) ? true : false;
-            let curr = $(".reaid-word.active");
+            let curr = $(".reaid-word.active-word");
             let target = next ? get_next(curr) : get_prev(curr);
             if (target.length) {
-                target.addClass("active");
+                target.addClass("active-word");
                 let top = target.offset().top;
                 let currTop = $("html, body").scrollTop();
                 if ( top <= currTop || top >= (currTop + screen.height / 2 + screen.height / 5)) {
                     target.scrollView();
                 }
-                curr.removeClass("active");
+                curr.removeClass("active-word");
             }
         }, WORD_DELAY);
 
