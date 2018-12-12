@@ -23,6 +23,17 @@ const throttle = (func, limit) => {
     };
 };
 
+const isPunctuation = (word) => {
+    if (word.length > 1) return false;
+    const punctuations = ".,;?:!";
+    return punctuations.indexOf(word) !== -1;
+}
+
+const getStringBetweenTag = (string) => {
+    const regex = /<([\w]+)[^>]*>(.*?)<\/\1>/
+    return string.match(regex)[2];
+}
+
 const activeScrollReader = () => {
     if (!readingMode) {
         readingMode = true;
@@ -33,13 +44,26 @@ const activeScrollReader = () => {
             for (let i = 0; i < contents.length; i++) {
                 let elem = contents[i];
                 if (elem.nodeName === "#text") {
-                    let text = $(elem).text().split(/(?=\.\s|,\s|;\s|\?\s|\!\s)/g).reduce((words, word) => {
-                        if (word.length) words.push(`<span class="scrollreading-word">${word}</span>`);
+                    let text = $(elem).text().split(/(?=\.\s|,\s|;\s|\?\s|\!\s)/g);
+                    // the text is a punctuation then append it to the last text node
+                    if (text.length === 1 && isPunctuation(text[0])) {
+                        const lastHTML = finalHTML[finalHTML.length - 1];
+                        const lastWord = getStringBetweenTag(lastHTML);
+                        finalHTML[finalHTML.length - 1] = `<span class="scrollreading-word">${lastWord}${text}</span>`;
+                        continue;
+                    }
+                    text = text.reduce((words, word) => {
+                        if (word.replace(/\s/, '').length) words.push(`<span class="scrollreading-word">${word}</span>`);
                         return words;
                     }, []).join("");
                     finalHTML.push(text);
                 } else {
-                    finalHTML.push($(elem).addClass("scrollreading-word")[0].outerHTML);
+                    const isElementHasText = !!$(elem)[0].textContent
+                    const elementClassName = isElementHasText
+                        ? "scrollreading-word"
+                        : ""
+                    const element = $(elem).addClass(elementClassName)[0]
+                    finalHTML.push(element.outerHTML);
                 }
             }
             $(this).html(finalHTML.join(""));
@@ -115,6 +139,9 @@ const activeScrollReader = () => {
                     }
                 }
             }
+            if (!next.hasClass('scrollreading-word')) {
+                next = get_next(next);
+            }
             return next;
         };
 
@@ -128,6 +155,9 @@ const activeScrollReader = () => {
                         prev = elem.find(".scrollreading-word:last-child"); break;
                     }
                 }
+            }
+            if (!prev.hasClass('scrollreading-word')) {
+                prev = get_prev(prev);
             }
             return prev;
         };
