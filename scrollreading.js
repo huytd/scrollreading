@@ -81,14 +81,14 @@ const activeScrollReader = () => {
 
         const keyboardHandler = e => {
             let keyCode = e.which || e.keyCode;
-            if (keyCode === 39 || keyCode === 40) {
-                // right/down = next
+            if (keyCode === 39 || keyCode === 40 || keyCode === 68 || keyCode === 83) {
+                // right/down/s/d = next
                 e.deltaY = 1;
                 e.preventDefault();
                 next_word(e);
             }
-            else if (keyCode === 38 || keyCode === 37) {
-                // up/left = prev
+            else if (keyCode === 38 || keyCode === 37 || keyCode === 65 || keyCode === 87) {
+                // up/left/a/w = prev
                 e.deltaY = -1;
                 e.preventDefault();
                 next_word(e);
