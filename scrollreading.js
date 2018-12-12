@@ -2,6 +2,7 @@ const WORD_DELAY = 200;
 let readPos = 0;
 let totalWords = 0;
 let readingMode = false;
+let lastActiveWord = null;
 
 $.fn.scrollView = function () {
     return this.each(function () {
@@ -45,35 +46,61 @@ const activeScrollReader = () => {
         });
 
         $('html,body').css('cursor','crosshair');
+        const readerIndicator = $(`<div class="scrollreading-status-indicator"></div>`);
+        $('body').append(readerIndicator);
 
-        window.addEventListener('wheel', (e) => {
+        const mouseWheelHandler = e => {
             if (!$(".scrollreading-word.active-word").length) return;
             e.preventDefault();
             next_word(e);
-        });
+        };
 
-        $(window).on('keydown', e => {
-            // L or W
-            if (e.which === 76 || e.which === 87) {
-                // next
+        const keyboardHandler = e => {
+            let keyCode = e.which || e.keyCode;
+            if (keyCode === 39 || keyCode === 40) {
+                // right/down = next
                 e.deltaY = 1;
-            } else
-                // H or B
-                if (e.which === 72 || e.which === 66) {
-                // prev
-                e.deltaY = -1;
+                e.preventDefault();
+                next_word(e);
             }
-            e.preventDefault();
-            next_word(e);
-        });
+            else if (keyCode === 38 || keyCode === 37) {
+                // up/left = prev
+                e.deltaY = -1;
+                e.preventDefault();
+                next_word(e);
+            }
+            // Do not block the keyboard event if nothing matched
+        };
+
+        const turnOn = (elem) => { 
+            $(".scrollreading-word.active-word").removeClass("active-word");
+            elem.addClass("active-word");
+            $(".scrollreading-status-indicator").addClass("activated");
+            window.addEventListener('wheel', mouseWheelHandler);
+            window.addEventListener('keydown', keyboardHandler);
+        };
+
+        const turnOff = () => { 
+            lastActiveWord = $(".active-word")[0];
+            $(".active-word").removeClass("active-word");
+            $(".scrollreading-status-indicator").removeClass("activated");
+            window.removeEventListener('wheel', mouseWheelHandler);
+            window.removeEventListener('keydown', keyboardHandler);
+        };
 
         $(".scrollreading-word").on('click', function() {
             if ($(this).hasClass("active-word")) {
-                $(this).removeClass("active-word");
-                return;
+                turnOff();
             } else {
-                $(".scrollreading-word.active-word").removeClass("active-word");
-                $(this).addClass("active-word");
+                turnOn($(this));
+            }
+        });
+
+        $(".scrollreading-status-indicator").on('click', function() {
+            if ($(this).hasClass("activated")) {
+                turnOff();
+            } else {
+                turnOn($(lastActiveWord));
             }
         });
 
