@@ -11,7 +11,7 @@ Being able to scroll freely will keep you from focusing on what you read. You sk
 # To Do
 
 - [x] ~~Implement a new mechanics to jump between paragraphs: _for now, there will be an error if paragraphs are separated by a different tags or hidden elements, more debug needed._~~
-- [ ] Tokenize with delimiters at the end: _currently, delimiters such as (:|.|,|...) are in the beginning of each token, this need to be fixed._
+- [x] ~~Tokenize with delimiters at the end: _currently, delimiters such as (:|.|,|...) are in the beginning of each token, this need to be fixed._~~
 - [ ] Better keyboard support: _the target will be vim-like movement, with the ability to select tokens by keyboard as well._
 - [ ] Configurable: _let the user changes the highlighting color, reading speed,..._
 - [x] ~~A more consistent on-screen indicator when the addon is running: _for now, if we activated scroll reading mode, user have no idea what's going on.~~
