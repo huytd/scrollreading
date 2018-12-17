@@ -29,9 +29,13 @@ const isPunctuation = (word) => {
     return punctuations.indexOf(word) !== -1;
 }
 
-const getStringBetweenTag = (string) => {
+const getTagInfo = (string) => {
     const regex = /<([\w]+)[^>]*>(.*?)<\/\1>/
-    return string.match(regex)[2];
+    const match = string.match(regex)
+    return {
+        tagName: match[1],
+        textContent: match[2]
+    }
 }
 
 const activeScrollReader = () => {
@@ -48,14 +52,58 @@ const activeScrollReader = () => {
                     // the text is a punctuation then append it to the last text node
                     if (text.length === 1 && isPunctuation(text[0])) {
                         const lastHTML = finalHTML[finalHTML.length - 1];
-                        const lastWord = getStringBetweenTag(lastHTML);
+                        const lastWord = getTagInfo(lastHTML).textContent;
                         finalHTML[finalHTML.length - 1] = `<span class="scrollreading-word">${lastWord}${text}</span>`;
                         continue;
                     }
-                    text = text.reduce((words, word) => {
-                        if (word.replace(/\s/, '').length) words.push(`<span class="scrollreading-word">${word}</span>`);
-                        return words;
-                    }, []).join("");
+                    const textArray = []
+                    text.forEach((word) => {
+                        if (word.replace(/\s/, '').length) {
+                            const totalWords = textArray.length;
+                            const lastIndex = totalWords - 1;
+                            const isWordStartWithPunctuation = isPunctuation(word[0])
+
+                            if (isWordStartWithPunctuation) {
+                                const hasPreviousText = !!textArray[lastIndex];
+
+                                const lastHTML = hasPreviousText
+                                    ? textArray[lastIndex]
+                                    : finalHTML[finalHTML.length - 1];
+
+                                const tagInfo = getTagInfo(lastHTML);
+
+                                if (hasPreviousText) {
+                                    // the previous text node does exists
+                                    // then we shall append the punctuation to it
+                                    const lastWord = tagInfo.textContent;
+                                    textArray[lastIndex] = `<span class="scrollreading-word">${lastWord}${word[0]}</span>`
+                                } else {
+                                    // previous text sentence is not found
+                                    // which means the previous sentence is in an html tag
+                                    // and not a text node so we have to append it to that
+                                    // last html tag
+                                    const lastTag = finalHTML[finalHTML.length - 1];
+                                    const tagName = tagInfo.tagName;
+                                    const closeTag = `</${tagName}>`;
+                                    const openTagAndLastWord = lastTag.substring(0, lastTag.length - closeTag.length);
+                                    const newTag = `${openTagAndLastWord}${word[0]}${closeTag}`;
+                                    finalHTML[finalHTML.length - 1] = newTag;
+                                }
+                            }
+                            // if the word start with punctuation then that
+                            // punctuation should be removed
+                            const finalWord = isWordStartWithPunctuation
+                                ? word.slice(1)
+                                : word;
+                            // for cases like ,\s when , is gone there's only \s left
+                            if (finalWord.replace(/\s/, '').length) {
+                                textArray.push(`<span class="scrollreading-word">${finalWord}</span>`);
+                            } else {
+                                textArray.push(finalWord);
+                            }
+                        }
+                    });
+                    text = textArray.join('');
                     finalHTML.push(text);
                 } else {
                     const isElementHasText = !!$(elem)[0].textContent
