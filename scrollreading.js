@@ -1,3 +1,5 @@
+window.browser = window.msBrowser || window.browser || window.chrome;
+
 const WORD_DELAY = 200;
 let readPos = 0;
 let totalWords = 0;
